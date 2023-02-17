@@ -18,6 +18,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const server_1 = __importDefault(require("../src/server"));
 const model_1 = __importDefault(require("../src/api/users/model"));
 const globals_1 = require("@jest/globals");
+const tools_1 = require("../src/api/lib/auth/tools");
 dotenv_1.default.config();
 const client = (0, supertest_1.default)(server_1.default);
 const validUser = {
@@ -27,7 +28,11 @@ const validUser = {
 };
 const validUserLogin = {
     email: "testuser@test.com",
-    password: "password1234"
+    password: "password1234",
+};
+const validUserWrongLogin = {
+    email: "testuser@test.com",
+    password: "password",
 };
 const anotherValidUser = {
     email: "test2@tester.com",
@@ -53,9 +58,20 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
             .post("/users/register")
             .send(anotherValidUser)
             .expect(201);
-        (0, globals_1.expect)(response.body).toBeDefined();
+        (0, globals_1.expect)(response.body.accessToken).toBeDefined();
+        const validAccessToken = (0, tools_1.verifyAccessToken)(response.body.accessToken);
+        (0, globals_1.expect)(validAccessToken);
     }));
-    it('Should test that post /register returns 401 with an invalid user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield client.post("/users/register").send(notValidUser).expect(400);
+    it("Should test that post /register returns 200 with valid login", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield client
+            .post("/users/login")
+            .send(validUserLogin)
+            .expect(200);
+    }));
+    it("Should test that post /register returns 401 with an invalid login", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield client
+            .post("/users/login")
+            .send(validUserWrongLogin)
+            .expect(401);
     }));
 });

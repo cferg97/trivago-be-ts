@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll",
+    "test-users": "jest -- users.test.js",
     "dev": "nodemon -r dotenv/config ./src/index.js"
   },
   "keywords": [],

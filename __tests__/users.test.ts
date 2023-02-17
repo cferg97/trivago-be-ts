@@ -17,9 +17,14 @@ const validUser = {
 };
 
 const validUserLogin = {
-    email:"testuser@test.com",
-    password: "password1234"
-}
+  email: "testuser@test.com",
+  password: "password1234",
+};
+
+const validUserWrongLogin = {
+  email: "testuser@test.com",
+  password: "password",
+};
 
 const anotherValidUser = {
   email: "test2@tester.com",
@@ -50,11 +55,22 @@ describe("Test User Endpoints", () => {
       .post("/users/register")
       .send(anotherValidUser)
       .expect(201);
-    expect(response.body).toBeDefined();
+    expect(response.body.accessToken).toBeDefined();
+    const validAccessToken = verifyAccessToken(response.body.accessToken);
+    expect(validAccessToken);
   });
 
-  it('Should test that post /register returns 401 with an invalid user', async () => {
-    const response = await client.post("/users/register").send(notValidUser).expect(400)
-    
-  })
+  it("Should test that post /register returns 200 with valid login", async () => {
+    const response = await client
+      .post("/users/login")
+      .send(validUserLogin)
+      .expect(200);
+  });
+
+  it("Should test that post /register returns 401 with an invalid login", async () => {
+    const response = await client
+      .post("/users/login")
+      .send(validUserWrongLogin)
+      .expect(401);
+  });
 });
