@@ -71,7 +71,7 @@ describe("Test User Endpoints", () => {
   });
 
   it("Should test that post /login returns 200 and valid JWT with valid login", async () => {
-    const response =  await client
+    const response = await client
       .post("/users/login")
       .send(validUserLogin)
       .expect(200);
