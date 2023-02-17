@@ -42,7 +42,7 @@ accomRouter.post(
   hostOnlyMiddleware,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newAccom = new accomModel({ ...req.body, host: req.user._id });
+      const newAccom = new accomModel({ ...req.body, host: req.user?._id });
       const { _id } = await newAccom.save();
       res.status(201).send({ id: _id });
     } catch (err) {
@@ -60,7 +60,7 @@ accomRouter.put(
       const accom = await accomModel.findOne({ _id: req.params.id });
 
       if (accom) {
-        if (req.user._id === accom.host.toString()) {
+        if (req.user?._id === accom.host.toString()) {
           await accomModel.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true,
@@ -96,7 +96,7 @@ accomRouter.delete(
     try {
       const accom = await accomModel.findOne({ _id: req.params.id });
       if (accom) {
-        if (req.user._id === accom.host.toString()) {
+        if (req.user?._id === accom.host.toString()) {
           const deletedAccom = await accomModel.findByIdAndDelete(
             req.params.id
           );

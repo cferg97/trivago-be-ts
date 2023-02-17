@@ -2,10 +2,10 @@ import express from "express";
 import createHttpError from "http-errors";
 import usersModel from "./model.js";
 import accomModel from "../accomodation/model.js";
-import q2m from "query-to-mongo";
+// import q2m from "query-to-mongo";
 import { createAccessToken } from "../lib/auth/tools";
 import { JWTAuthMiddleware } from "../lib/auth/jwtAuth";
-import { HostOnlyMiddleware } from "../lib/auth/hostOnly";
+import { hostOnlyMiddleware } from "../lib/auth/hostOnly";
 
 const usersRouter = express.Router();
 
@@ -40,11 +40,11 @@ usersRouter.post("/login", async (req, res, next) => {
 usersRouter.get(
   "/me/accomodation",
   JWTAuthMiddleware,
-  HostOnlyMiddleware,
+  hostOnlyMiddleware,
   async (req, res, next) => {
     try {
       const accom = await accomModel.find(
-        { host: req.user._id },
+        { host: req.user?._id },
         "-createdAt -updatedAt -__v -host"
       );
       if (accom.length === 0) {
@@ -61,7 +61,7 @@ usersRouter.get(
 
 usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
   try {
-    const me = await usersModel.findById(req.user._id);
+    const me = await usersModel.findById(req.user?._id);
     res.send(me);
   } catch (err) {
     next(err);

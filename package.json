@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test-users": "jest -- users.test.js",
+    "test-accomodation": "jest --  accomodation.test.js",
     "dev": "nodemon -r dotenv/config ./src/index.js"
   },
   "keywords": [],

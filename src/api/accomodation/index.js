@@ -48,8 +48,9 @@ accomRouter.get("/:id", jwtAuth_1.JWTAuthMiddleware, (req, res, next) => __await
     }
 }));
 accomRouter.post("/", jwtAuth_1.JWTAuthMiddleware, hostOnly_1.hostOnlyMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const newAccom = new model_1.default(Object.assign(Object.assign({}, req.body), { host: req.user._id }));
+        const newAccom = new model_1.default(Object.assign(Object.assign({}, req.body), { host: (_a = req.user) === null || _a === void 0 ? void 0 : _a._id }));
         const { _id } = yield newAccom.save();
         res.status(201).send({ id: _id });
     }
@@ -58,10 +59,11 @@ accomRouter.post("/", jwtAuth_1.JWTAuthMiddleware, hostOnly_1.hostOnlyMiddleware
     }
 }));
 accomRouter.put("/:id", jwtAuth_1.JWTAuthMiddleware, hostOnly_1.hostOnlyMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
     try {
         const accom = yield model_1.default.findOne({ _id: req.params.id });
         if (accom) {
-            if (req.user._id === accom.host.toString()) {
+            if (((_b = req.user) === null || _b === void 0 ? void 0 : _b._id) === accom.host.toString()) {
                 yield model_1.default.findByIdAndUpdate(req.params.id, req.body, {
                     new: true,
                     runValidators: true,
@@ -81,10 +83,11 @@ accomRouter.put("/:id", jwtAuth_1.JWTAuthMiddleware, hostOnly_1.hostOnlyMiddlewa
     }
 }));
 accomRouter.delete("/:id", jwtAuth_1.JWTAuthMiddleware, hostOnly_1.hostOnlyMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
     try {
         const accom = yield model_1.default.findOne({ _id: req.params.id });
         if (accom) {
-            if (req.user._id === accom.host.toString()) {
+            if (((_c = req.user) === null || _c === void 0 ? void 0 : _c._id) === accom.host.toString()) {
                 const deletedAccom = yield model_1.default.findByIdAndDelete(req.params.id);
                 if (deletedAccom) {
                     res.status(204).send();
