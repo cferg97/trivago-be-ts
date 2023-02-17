@@ -1,8 +1,16 @@
 import mongoose from "mongoose";
+import { Document, Model, Schema } from "mongoose";
 
-const { Schema, model } = mongoose;
+interface Accomodation extends Document {
+  name: string;
+  host: Schema.Types.ObjectId;
+  description: string;
+  maxGuests: number;
+  city: string;
+  country: string;
+}
 
-const accomodationSchema = new Schema(
+const accomodationSchema: Schema<Accomodation> = new Schema(
   {
     name: { type: String, required: true },
     host: { type: Schema.Types.ObjectId, ref: "users", required: true },
@@ -16,4 +24,10 @@ const accomodationSchema = new Schema(
   }
 );
 
-export default model("accomodation", accomodationSchema);
+const accomodationModel: Model<Accomodation> = mongoose.model(
+  "accomodation",
+  accomodationSchema
+);
+
+export default accomodationModel;
+ 

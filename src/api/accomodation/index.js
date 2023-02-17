@@ -14,13 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const http_errors_1 = __importDefault(require("http-errors"));
-const jwtAuth_js_1 = require("../../lib/auth/jwtAuth.js");
-const hostOnly_js_1 = require("../../lib/auth/hostOnly.js");
-const model_js_1 = __importDefault(require("./model.js"));
+const jwtAuth_1 = require("../lib/auth/jwtAuth");
+const hostOnly_1 = require("../lib/auth/hostOnly");
+const model_1 = __importDefault(require("./model"));
 const accomRouter = express_1.default.Router();
-accomRouter.get("/", jwtAuth_js_1.JWTAuthMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accomRouter.get("/", jwtAuth_1.JWTAuthMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const accom = yield model_js_1.default.find({}).populate({
+        const accom = yield model_1.default.find({}).populate({
             path: "host",
             select: "email -_id",
         });
@@ -30,9 +30,9 @@ accomRouter.get("/", jwtAuth_js_1.JWTAuthMiddleware, (req, res, next) => __await
         next(err);
     }
 }));
-accomRouter.get("/:id", jwtAuth_js_1.JWTAuthMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accomRouter.get("/:id", jwtAuth_1.JWTAuthMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const accom = yield model_js_1.default.findById(req.params.id).populate({
+        const accom = yield model_1.default.findById(req.params.id).populate({
             path: "host",
             select: "email -_id",
         });
@@ -47,9 +47,9 @@ accomRouter.get("/:id", jwtAuth_js_1.JWTAuthMiddleware, (req, res, next) => __aw
         next(err);
     }
 }));
-accomRouter.post("/", jwtAuth_js_1.JWTAuthMiddleware, hostOnly_js_1.HostOnlyMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accomRouter.post("/", jwtAuth_1.JWTAuthMiddleware, hostOnly_1.hostOnlyMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newAccom = new model_js_1.default(Object.assign(Object.assign({}, req.body), { host: req.user._id }));
+        const newAccom = new model_1.default(Object.assign(Object.assign({}, req.body), { host: req.user._id }));
         const { _id } = yield newAccom.save();
         res.status(201).send({ id: _id });
     }
@@ -57,12 +57,12 @@ accomRouter.post("/", jwtAuth_js_1.JWTAuthMiddleware, hostOnly_js_1.HostOnlyMidd
         next(err);
     }
 }));
-accomRouter.put("/:id", jwtAuth_js_1.JWTAuthMiddleware, hostOnly_js_1.HostOnlyMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accomRouter.put("/:id", jwtAuth_1.JWTAuthMiddleware, hostOnly_1.hostOnlyMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const accom = yield model_js_1.default.findOne({ _id: req.params.id });
+        const accom = yield model_1.default.findOne({ _id: req.params.id });
         if (accom) {
             if (req.user._id === accom.host.toString()) {
-                yield model_js_1.default.findByIdAndUpdate(req.params.id, req.body, {
+                yield model_1.default.findByIdAndUpdate(req.params.id, req.body, {
                     new: true,
                     runValidators: true,
                 });
@@ -80,17 +80,17 @@ accomRouter.put("/:id", jwtAuth_js_1.JWTAuthMiddleware, hostOnly_js_1.HostOnlyMi
         next(err);
     }
 }));
-accomRouter.delete("/:id", jwtAuth_js_1.JWTAuthMiddleware, hostOnly_js_1.HostOnlyMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accomRouter.delete("/:id", jwtAuth_1.JWTAuthMiddleware, hostOnly_1.hostOnlyMiddleware, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const accom = yield model_js_1.default.findOne({ _id: req.params.id });
+        const accom = yield model_1.default.findOne({ _id: req.params.id });
         if (accom) {
             if (req.user._id === accom.host.toString()) {
-                const deletedAccom = yield model_js_1.default.findByIdAndDelete(req.params.id);
+                const deletedAccom = yield model_1.default.findByIdAndDelete(req.params.id);
                 if (deletedAccom) {
                     res.status(204).send();
                 }
                 else {
-                    next((0, http_errors_1.default)(404, `Accomodation not found with ID ${req.params.id}`));
+                    next((0, http_errors_1.default)(404, `Cannot find accomodation with ID ${req.params.id}`));
                 }
             }
         }

@@ -1,12 +1,12 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import createHttpError from "http-errors";
-import { JWTAuthMiddleware } from "../../lib/auth/jwtAuth.js";
-import { HostOnlyMiddleware } from "../../lib/auth/hostOnly.js";
-import accomModel from "./model.js";
+import { JWTAuthMiddleware } from "../lib/auth/jwtAuth";
+import { hostOnlyMiddleware } from "../lib/auth/hostOnly";
+import accomModel from "./model";
 
 const accomRouter = express.Router();
 
-accomRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
+accomRouter.get("/", JWTAuthMiddleware, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const accom = await accomModel.find({}).populate({
       path: "host",
@@ -18,7 +18,7 @@ accomRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
   }
 });
 
-accomRouter.get("/:id", JWTAuthMiddleware, async (req, res, next) => {
+accomRouter.get("/:id", JWTAuthMiddleware, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const accom = await accomModel.findById(req.params.id).populate({
       path: "host",
@@ -39,8 +39,8 @@ accomRouter.get("/:id", JWTAuthMiddleware, async (req, res, next) => {
 accomRouter.post(
   "/",
   JWTAuthMiddleware,
-  HostOnlyMiddleware,
-  async (req, res, next) => {
+  hostOnlyMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newAccom = new accomModel({ ...req.body, host: req.user._id });
       const { _id } = await newAccom.save();
@@ -54,8 +54,8 @@ accomRouter.post(
 accomRouter.put(
   "/:id",
   JWTAuthMiddleware,
-  HostOnlyMiddleware,
-  async (req, res, next) => {
+  hostOnlyMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const accom = await accomModel.findOne({ _id: req.params.id });
 
@@ -91,8 +91,8 @@ accomRouter.put(
 accomRouter.delete(
   "/:id",
   JWTAuthMiddleware,
-  HostOnlyMiddleware,
-  async (req, res, next) => {
+  hostOnlyMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const accom = await accomModel.findOne({ _id: req.params.id });
       if (accom) {
@@ -106,7 +106,7 @@ accomRouter.delete(
             next(
               createHttpError(
                 404,
-                `Accomodation not found with ID ${req.params.id}`
+                `Cannot find accomodation with ID ${req.params.id}`
               )
             );
           }

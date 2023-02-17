@@ -1,11 +1,27 @@
+import { Request, Response, NextFunction } from "express";
 import createHttpError from "http-errors";
 
-export const HostOnlyMiddleware = (req, res, next) => {
-  if (req.user.role === "Host") {
+interface User {
+  _id: string;
+  role: string;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
+  }
+}
+
+export const hostOnlyMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.user?.role === "Host") {
     next();
   } else {
-    next(
-      createHttpError(403, "You are not authorized to carry out this action")
-    );
+    next(createHttpError(403, "You are not authorized to perform this action"));
   }
 };

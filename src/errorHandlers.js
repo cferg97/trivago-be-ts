@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.genericErrorHandler = exports.unauthorizedHandler = exports.badRequestHandler = void 0;
+exports.genericErrorHandler = exports.forbiddenHandler = exports.unauthorizedHandler = exports.badRequestHandler = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const badRequestHandler = (err, req, res, next) => {
     if (err.status === 400 || err instanceof mongoose_1.default.Error.ValidationError) {
@@ -23,6 +23,15 @@ const unauthorizedHandler = (err, req, res, next) => {
     }
 };
 exports.unauthorizedHandler = unauthorizedHandler;
+const forbiddenHandler = (err, req, res, next) => {
+    if (err.status === 403) {
+        res.status(403).send({ message: err.message });
+    }
+    else {
+        next(err);
+    }
+};
+exports.forbiddenHandler = forbiddenHandler;
 const genericErrorHandler = (err, req, res, next) => {
     console.log(err);
     res.status(500).send({ message: "We gonna fix it asap!" });

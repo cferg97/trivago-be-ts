@@ -62,13 +62,25 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
         const validAccessToken = (0, tools_1.verifyAccessToken)(response.body.accessToken);
         (0, globals_1.expect)(validAccessToken);
     }));
-    it("Should test that post /register returns 200 with valid login", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("Should test that post /register returns 200 with valid login and returns a valid JWT", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield client
             .post("/users/login")
             .send(validUserLogin)
             .expect(200);
+        (0, globals_1.expect)(response.body.accessToken).toBeDefined();
+        const validAccessToken = (0, tools_1.verifyAccessToken)(response.body.accessToken);
+        (0, globals_1.expect)(validAccessToken);
     }));
-    it("Should test that post /register returns 401 with an invalid login", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("Should test that post /login returns 200 and valid JWT with valid login", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield client
+            .post("/users/login")
+            .send(validUserLogin)
+            .expect(200);
+        (0, globals_1.expect)(response.body.accessToken).toBeDefined();
+        const validAccessToken = (0, tools_1.verifyAccessToken)(response.body.accessToken);
+        (0, globals_1.expect)(validAccessToken);
+    }));
+    it("Should test that post /login returns 401 with an invalid login", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield client
             .post("/users/login")
             .send(validUserWrongLogin)

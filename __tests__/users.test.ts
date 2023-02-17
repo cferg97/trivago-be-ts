@@ -60,14 +60,27 @@ describe("Test User Endpoints", () => {
     expect(validAccessToken);
   });
 
-  it("Should test that post /register returns 200 with valid login", async () => {
+  it("Should test that post /register returns 200 with valid login and returns a valid JWT", async () => {
     const response = await client
       .post("/users/login")
       .send(validUserLogin)
       .expect(200);
+    expect(response.body.accessToken).toBeDefined();
+    const validAccessToken = verifyAccessToken(response.body.accessToken);
+    expect(validAccessToken);
   });
 
-  it("Should test that post /register returns 401 with an invalid login", async () => {
+  it("Should test that post /login returns 200 and valid JWT with valid login", async () => {
+    const response =  await client
+      .post("/users/login")
+      .send(validUserLogin)
+      .expect(200);
+    expect(response.body.accessToken).toBeDefined();
+    const validAccessToken = verifyAccessToken(response.body.accessToken);
+    expect(validAccessToken);
+  });
+
+  it("Should test that post /login returns 401 with an invalid login", async () => {
     const response = await client
       .post("/users/login")
       .send(validUserWrongLogin)
